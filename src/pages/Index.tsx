@@ -1,13 +1,15 @@
-
 import React, { useState } from 'react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import PromptInput from '@/components/PromptInput';
 import FeedbackPanel from '@/components/FeedbackPanel';
 import ImprovedPrompt from '@/components/ImprovedPrompt';
+import PromptTemplates from '@/components/PromptTemplates';
+import AnalyticsDashboard from '@/components/AnalyticsDashboard';
 import { Card } from '@/components/ui/card';
 import { useToast } from '@/components/ui/use-toast';
 import { CriterionScore } from '@/components/EvaluationCriteria';
+import { PromptProvider, usePrompt } from '@/contexts/PromptContext';
 
 // Mock evaluation function - in a real app, this would call an API
 const mockEvaluatePrompt = (prompt: string) => {
@@ -79,8 +81,9 @@ const mockEvaluatePrompt = (prompt: string) => {
   });
 };
 
-const Index = () => {
+const IndexContent = () => {
   const { toast } = useToast();
+  const { addToHistory } = usePrompt();
   const [prompt, setPrompt] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [evaluationResults, setEvaluationResults] = useState<{
@@ -106,6 +109,14 @@ const Index = () => {
       const results = await mockEvaluatePrompt(prompt);
       setEvaluationResults(results);
       
+      // Add to history
+      addToHistory({
+        prompt,
+        score: results.score,
+        tags: [],
+        category: 'General'
+      });
+      
       toast({
         title: "Evaluation complete",
         description: "Your prompt has been evaluated successfully.",
@@ -120,6 +131,10 @@ const Index = () => {
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const handleTemplateSelect = (template: string) => {
+    setPrompt(template);
   };
 
   return (
@@ -137,6 +152,8 @@ const Index = () => {
               Get a quality score, detailed feedback, and suggestions for improvement.
             </p>
           </Card>
+          
+          <PromptTemplates onSelectTemplate={handleTemplateSelect} />
           
           <div className="space-y-6">
             <PromptInput 
@@ -161,11 +178,23 @@ const Index = () => {
               </div>
             )}
           </div>
+
+          <div className="mt-12">
+            <AnalyticsDashboard />
+          </div>
         </div>
       </main>
       
       <Footer />
     </div>
+  );
+};
+
+const Index = () => {
+  return (
+    <PromptProvider>
+      <IndexContent />
+    </PromptProvider>
   );
 };
 
