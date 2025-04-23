@@ -39,7 +39,6 @@ const PromptTemplates = ({ onSelectTemplate }: PromptTemplatesProps) => {
               Use Template
             </Button>
           </Card>
-        </Card>
         ))}
       </div>
     </div>

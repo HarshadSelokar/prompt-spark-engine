@@ -108,3 +108,13 @@
   transform-origin: 50% 50%;
   transition: stroke-dashoffset 0.5s ease;
 }
+
+/* Dark mode transition */
+html.dark {
+  color-scheme: dark;
+}
+
+/* Apply fade transition for theme changes */
+* {
+  transition: background-color 0.2s ease-in-out, border-color 0.2s ease-in-out;
+}
